@@ -50,9 +50,11 @@ export default function CheckoutForm() {
   };
 
   return (
-    <form onSubmit={handleSubmit}>
-      <CardSection />
-      <button disabled={!stripe}>Confirm order</button>
-    </form>
+    <div>
+      <form onSubmit={handleSubmit}>
+        <CardSection />
+        <button disabled={!stripe}>Confirm order</button>
+      </form>
+    </div>
   );
 }
