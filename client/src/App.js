@@ -6,6 +6,7 @@ import Routes from "./Routes";
 
 // Make sure to call `loadStripe` outside of a component’s render to avoid
 // recreating the `Stripe` object on every render.
+// Publishable key
 const stripePromise = loadStripe(
   "pk_test_51IXl70SCs7NRMvuhxmSWN6iVMSdiLfNewvY2P3mpcsRZsckvm7XCONVk8wVBaQAUhKMipwiI4i2qDJkevaErlhjw00ouvmuygC"
 );

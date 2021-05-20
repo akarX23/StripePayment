@@ -8,14 +8,16 @@ const SubscriptionForm = () => {
   const stripe = useStripe();
   const elements = useElements();
 
-  function onSubscriptionComplete(result) {
-    console.log(result);
+  async function onSubscriptionComplete(result) {
+    const subscription = await axios
+      .get(`http://localhost:5000/get-subscription/${result.subscription.id}`)
+      .then((result) => result.data);
+    console.log(subscription);
     // Payment was successful.
-    if (result.subscription.status === "active") {
+    if (subscription.status === "active") {
       // Change your UI to show a success message to your customer.
       // Call your backend to grant access to your service based on
-      // `result.subscription.items.data[0].price.product` the customer subscribed to.
-      console.log(result);
+      // `result.subscription.items.data[0].price.product` the customer subscribed to
       alert("Success");
     } else alert("unsuccessfull");
   }
@@ -54,10 +56,10 @@ const SubscriptionForm = () => {
             if (result.paymentIntent.status === "succeeded") {
               // Show a success message to your customer.
               return {
-                priceId: priceId,
-                subscription: subscription,
-                invoice: invoice,
-                paymentMethodId: paymentMethodId,
+                priceId,
+                subscription,
+                invoice,
+                paymentMethodId,
               };
             }
           }
@@ -172,9 +174,9 @@ const SubscriptionForm = () => {
   }) => {
     const response = await axios
       .post("http://localhost:5000/create-subscription", {
-        customerId: customerId,
-        paymentMethodId: paymentMethodId,
-        priceId: priceId,
+        customerId,
+        paymentMethodId,
+        priceId,
       })
       .then((response) => {
         console.log(response);
@@ -231,20 +233,20 @@ const SubscriptionForm = () => {
     stripe
       .createPaymentMethod({
         type: "card",
-        card: card,
+        card,
         billing_details: {
           name: "Ritik Agrawal",
         },
       })
       .then((result) => {
         if (result.error) {
-          alert(result);
+          console.log(result);
           return;
         } else {
           createSubscription({
             customerId: customer.id,
             paymentMethodId: result.paymentMethod.id,
-            priceId: priceId,
+            priceId,
           });
         }
       });
@@ -255,9 +257,9 @@ const SubscriptionForm = () => {
       <CardSection />
       <button
         disabled={!stripe}
-        onClick={() => handleSubmit("price_1IYUKiSCs7NRMvuhc1FQqNKS")}
+        onClick={() => handleSubmit("price_1ItG5ISCs7NRMvuhrhCH0dbY")} // Price ID
       >
-        5 $ subscription
+        20 $ subscription
       </button>
       <button
         disabled={!stripe}
@@ -265,8 +267,11 @@ const SubscriptionForm = () => {
       >
         10 $ subscription
       </button>
-      <button disabled={!stripe} onClick={() => cancelSubscription("")}>
-        Cancel 5 $ subscription
+      <button
+        disabled={!stripe}
+        onClick={() => cancelSubscription("sub_JWInZI6UcrHgSm")}
+      >
+        Cancel 20 $ subscription
       </button>
       <button disabled={!stripe} onClick={() => cancelSubscription("")}>
         Cancel 10 $ subscription

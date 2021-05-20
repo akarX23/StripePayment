@@ -1,10 +1,11 @@
 const express = require("express");
 const app = express();
 const cors = require("cors");
+
+// Secret key
 const stripe = require("stripe")(
   "sk_test_51IXl70SCs7NRMvuh1zSRiOwhuFmX0u3pkyJ4Xq8PLje0GTpYBzVg5UAvBVPQlXVgn49HCakmgYWZIJgODI9uM1Rx00nalNrJBO"
 );
-const bodyParser = require("body-parser");
 
 app.use(express.json());
 app.use(cors());
@@ -77,7 +78,7 @@ app.post("/cancel-subscription", async (req, res) => {
   const deletedSubscription = await stripe.subscriptions.del(
     req.body.subscriptionId
   );
-  res.status(200).json(deletedSubscription);
+  return res.status(200).json(deletedSubscription);
 });
 
 app.post("/retry-invoice", async (req, res) => {
@@ -103,6 +104,14 @@ app.post("/retry-invoice", async (req, res) => {
     expand: ["payment_intent"],
   });
   res.status(200).send(invoice);
+});
+
+app.get("/get-subscription/:subscriptionId", async (req, res) => {
+  const subscription = await stripe.subscriptions.retrieve(
+    req.params.subscriptionId
+  );
+  console.log(subscription);
+  res.status(200).send(subscription);
 });
 
 app.listen(5000, () => console.log("Server running on port 5000"));
